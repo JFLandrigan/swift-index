@@ -18,9 +18,9 @@ class SparseIndex:
 
     def build(
         self,
+        content: List[str],
         content_id_list: List[str],
         transform: str,
-        content: List[str],
     ):
 
         # init the transformer

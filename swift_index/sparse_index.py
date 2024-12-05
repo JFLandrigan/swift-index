@@ -1,4 +1,5 @@
 from typing import Dict, List, Union
+import uuid
 
 import numpy as np
 import pandas as pd
@@ -19,8 +20,8 @@ class SparseIndex:
     def build(
         self,
         content: List[str],
-        content_id_list: List[str],
         transform: str,
+        content_id_list: List[str]=None,
     ):
 
         # init the transformer
@@ -33,6 +34,9 @@ class SparseIndex:
             raise ValueError(
                 f"Expected transform of type {TRANSFORM_TYPES} got {transform}"
             )
+
+        if content_id_list is None:
+            content_id_list = [str(uuid.uuid4()) for i in rnage(len(content))]
 
         # Add content_id to the list
         self.lookup = {i: content_id_list[i] for i in range(len(content_id_list))}

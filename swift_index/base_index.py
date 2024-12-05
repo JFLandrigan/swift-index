@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+# TODO: add in add and remove methods
 
 class BaseIndex(ABC):
     def __init__(self) -> None:

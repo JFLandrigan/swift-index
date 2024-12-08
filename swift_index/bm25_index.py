@@ -1,15 +1,19 @@
 from typing import List
 
+
 import pandas as pd
 import bm25s
 from bm25s import BM25
 
+from swift_index.base_index import BaseIndex
 
-class BM25Index:
+
+class BM25Index(BaseIndex):
 
     def __init__(self):
         self.doc_ids: List[str] = None
         self.index: BM25 = None
+        super().__init__()
 
     def build(
         self,

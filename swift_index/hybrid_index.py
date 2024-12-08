@@ -4,10 +4,10 @@ import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 
-from poc.search_utils.base_index import BaseIndex
-from poc.search_utils.bm25_index import BM25Index
-from poc.search_utils.faiss_index import FAISSIndex
-from poc.search_utils.sparse_index import SparseIndex
+from swift_index.base_index import BaseIndex
+from swift_index.bm25_index import BM25Index
+from swift_index.faiss_index import FAISSIndex
+from swift_index.sparse_index import SparseIndex
 
 SPARSE_TYPES: List[str] = ["bm25", "tfidf", "count"]
 

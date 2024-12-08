@@ -7,6 +7,8 @@ from scipy.sparse import csr_matrix
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from swift_index.base_index import BaseIndex
+
 TRANSFORM_TYPES = ["tfidf", "count"]
 
 
@@ -16,6 +18,7 @@ class SparseIndex:
         self.sparse_matrix: csr_matrix = None
         self.lookup: Dict[int, str] = None
         self.transformer: Union[CountVectorizer, TfidfVectorizer] = None
+        super().__init__()
 
     def build(
         self,

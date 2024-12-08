@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 
-from poc.search_utils.base_index import BaseIndex
+from swift_index.base_index import BaseIndex
 
 
 class FAISSIndex(BaseIndex):

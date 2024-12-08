@@ -19,9 +19,9 @@ class SparseIndex:
 
     def build(
         self,
-        content: List[str],
+        doc_ids: List[str],
+        docs: List[str],
         transform: str,
-        content_id_list: List[str]=None,
     ):
 
         # init the transformer
@@ -35,14 +35,11 @@ class SparseIndex:
                 f"Expected transform of type {TRANSFORM_TYPES} got {transform}"
             )
 
-        if content_id_list is None:
-            content_id_list = [str(uuid.uuid4()) for i in rnage(len(content))]
-
         # Add content_id to the list
-        self.lookup = {i: content_id_list[i] for i in range(len(content_id_list))}
+        self.lookup = {i: doc_ids[i] for i in range(len(docs_ids))}
 
         # Create the matrix
-        self.sparse_matrix = self.transformer.fit_transform(content)
+        self.sparse_matrix = self.transformer.fit_transform(docs)
 
         return
 

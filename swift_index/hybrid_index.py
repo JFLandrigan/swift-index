@@ -17,6 +17,18 @@ class HybridIndex(BaseIndex):
         super().__init__()
         self.dense_index = FAISSIndex()
 
+        self.num_items: int = None
+
+    def build(
+        self,
+        docs_ids: List[str],
+        docs: List[str],
+        dense_transformer: SentenceTransformer,
+        sparse_transform: str,
+        embeddings: Optional[np.ndarray] = None,
+    ):
+        self.num_items = len(docs_ids)
+
         if sparse_type in SPARSE_TYPES:
             self.sparse_type = sparse_type
             if sparse_type == "bm25":
@@ -26,30 +38,19 @@ class HybridIndex(BaseIndex):
         else:
             raise ValueError(f"sparse_type expects: {SPARSE_TYPES}, got {sparse_type}")
 
-        self.num_items: int = None
-
-    def build(
-        self,
-        content_id_list: List[str],
-        content: List[str],
-        dense_transformer: SentenceTransformer,
-        embeddings: Optional[np.ndarray] = None,
-    ):
-        self.num_items = len(content_id_list)
-
         self.dense_index.build(
-            content_id_list=content_id_list,
-            content=content,
+            docs_ids=docs_ids,
+            docs=docs,
             tansformer=dense_transformer,
             embeddings=embeddings,
         )
 
         if self.sparse_type == "bm25":
-            self.sparse_index.build(content_id_list=content_id_list, content=content)
+            self.sparse_index.build(docs_ids=docs_ids, docs=docs)
         else:
             self.sparse_index.build(
-                content_id_list=content_id_list,
-                content=content,
+                docs_ids=docs_ids,
+                docs=docs,
                 transform=self.sparse_type,
             )
 
@@ -86,10 +87,10 @@ class HybridIndex(BaseIndex):
         )
 
         # Combine the results
-        tmp = pd.DataFrame({"content_id": dres, "dense_score": d_scores})
-        tmp_bm = pd.DataFrame({"content_id": sres, "sparse_score": s_scores})
+        tmp = pd.DataFrame({"doc_id": dres, "dense_score": d_scores})
+        tmp_bm = pd.DataFrame({"doc_id": sres, "sparse_score": s_scores})
 
-        tmp = tmp.merge(tmp_bm, how="inner", on="content_id")
+        tmp = tmp.merge(tmp_bm, how="inner", on="doc_id")
 
         # Get weighted combined scores
         sparse_wt = 1 - alpha
@@ -117,8 +118,8 @@ class HybridIndex(BaseIndex):
 
         if return_scores:
             return (
-                tmp["content_id"].tolist()[:num_results],
+                tmp["doc_id"].tolist()[:num_results],
                 tmp["score"].tolist()[:num_results],
             )
         else:
-            return tmp["content_id"].tolist()[:num_results]
+            return tmp["doc_id"].tolist()[:num_results]

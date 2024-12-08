@@ -17,21 +17,21 @@ class FAISSIndex(BaseIndex):
 
     def build(
         self,
-        content_id_list: List[str],
+        doc_ids: List[str],
         tansformer: SentenceTransformer,
         embeddings: Optional[np.ndarray] = None,
-        content: List[str] = None,
+        docs: List[str] = None,
     ):
 
         # init the transformer
         self.transformer = tansformer
 
-        # Add content_id to the list
-        self.lookup = {i: content_id_list[i] for i in range(len(content_id_list))}
+        # Add doc_id to the list
+        self.lookup = {i: doc_ids[i] for i in range(len(doc_ids))}
 
         # Prep the embeddings
         if embeddings is None:
-            embeddings = self.transformer.encode(content, show_progress_bar=True)
+            embeddings = self.transformer.encode(docs, show_progress_bar=True)
 
         embeddings = np.array(embeddings, dtype=np.float32)
         faiss.normalize_L2(embeddings)

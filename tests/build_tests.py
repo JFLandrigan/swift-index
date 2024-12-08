@@ -17,12 +17,14 @@ DOCS = [
 DOCS_IDS = [str(uuid.uuid4()) for i in len(docs)]
 
 INDECES =[
-	('bm25', '', BM25Index),
+	('bm25', '', BM25Index, {}),
 	('sparse count', SparseIndex, {'transform':'count'}),
 	('sparse tfidf', SparseIndex, {'transform':'tfidf'}),
 	('faiss', FAISSIndex, {'transformer':'sentence-transformers/all-MiniLM-L6-v2'}),
 	('hybrid', HybridIndex, {'transformer':'sentence-transformers/all-MiniLM-L6-v2', 'sparse_transform':'bm25'})
 ]
+
+QUERY = 'Hybrid search is best'
 
 def test_builds():
 	for name, index, params in INDECES:
@@ -31,3 +33,9 @@ def test_builds():
 
 	print("All builds were successful")
 
+
+def main():
+	test_builds()
+
+if __name__ == '__main__':
+	main()

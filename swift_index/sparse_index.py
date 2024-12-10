@@ -50,7 +50,7 @@ class SparseIndex:
         self,
         query: Union[str, np.ndarray],
         num_results: int = 10,
-        return_sims: bool = False,
+        return_scores: bool = False,
     ) -> pd.DataFrame:
         """Perform search for most sim"""
 
@@ -63,7 +63,7 @@ class SparseIndex:
         top_inds = similarity_matrix.argsort()[-num_results:]
         top_sims = [similarity_matrix[ind] for ind in top_inds]
 
-        if return_sims:
+        if return_scores:
             return [self.lookup[ind] for ind in top_inds], top_sims
         else:
             return [self.lookup[ind] for ind in top_inds]

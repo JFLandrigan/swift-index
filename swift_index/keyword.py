@@ -1,4 +1,4 @@
-from typing import Union
+from typing import List, Union
 
 from swift_index.base_index import BaseIndex
 from swift_index.bm25_index import BM25Index
@@ -6,7 +6,7 @@ from swift_index.sparse_index import SparseIndex
 
 SPARSE_TRANSFORMS = ['tfidf', 'count']
 
-class KeyWordIndex(BaseIndex):
+class KeywordIndex(BaseIndex):
 
     def __init__(self):
         self.index: Union[BM25Index, SparseIndex]  = None
@@ -30,8 +30,8 @@ class KeyWordIndex(BaseIndex):
 
     def search(
         self, 
-        query: Union[str, np.ndarray], 
-        num_results: int = 10, 
+        query: str, 
+        num_results: int = 5, 
         return_scores: bool = False,
     ):
         return self.index.search(

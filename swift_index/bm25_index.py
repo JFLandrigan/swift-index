@@ -34,7 +34,7 @@ class BM25Index(BaseIndex):
     def search(
         self,
         query: str,
-        num_results: int = 10,
+        num_results: int = 5,
         return_scores: bool = False,
     ) -> pd.DataFrame:
         """Perform search for most sim"""

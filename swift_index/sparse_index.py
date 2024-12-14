@@ -39,7 +39,7 @@ class SparseIndex:
             )
 
         # Add content_id to the list
-        self.lookup = {i: doc_ids[i] for i in range(len(docs_ids))}
+        self.lookup = {i: doc_ids[i] for i in range(len(doc_ids))}
 
         # Create the matrix
         self.sparse_matrix = self.transformer.fit_transform(docs)
@@ -49,17 +49,17 @@ class SparseIndex:
     def search(
         self,
         query: Union[str, np.ndarray],
-        num_results: int = 10,
+        num_results: int = 5,
         return_scores: bool = False,
     ) -> pd.DataFrame:
         """Perform search for most sim"""
 
         # transform the query to sparse vector if it is string.
         if isinstance(query, str) and self.transformer is not None:
-            vector = self.transformer.transform([query])
+            query_vector = self.transformer.transform([query])
 
         # get cosine sim scores
-        similarity_matrix = cosine_similarity(vector, self.sparse_matrix)[0]
+        similarity_matrix = cosine_similarity(query_vector, self.sparse_matrix)[0]
         top_inds = similarity_matrix.argsort()[-num_results:]
         top_sims = [similarity_matrix[ind] for ind in top_inds]
 

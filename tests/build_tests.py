@@ -4,6 +4,9 @@ from swift_index.keyword import KeywordIndex
 from swift_index.semantic import SemanticIndex
 
 # TODO : check on the scoring for the sparse indices seems to be returning default order
+# TODO: test the hybrid index
+# TODO: add in a remove item method
+# TODO: add in a add item method
 
 DOCS = [
 	"This list of documents is used for testing the indeces",
@@ -24,7 +27,7 @@ INDECES =[
 	('keywrod tfidf', KeywordIndex(), {'doc_ids':DOC_IDS, 'docs':DOCS, 'transform':'tfidf'}),
 	('keywrod bm25', KeywordIndex(), {'doc_ids':DOC_IDS, 'docs':DOCS, 'transform':'bm25'}),
 	('faiss', SemanticIndex(), {'doc_ids':DOC_IDS, 'docs':DOCS, 'transformer':'sentence-transformers/all-MiniLM-L6-v2'}),
-	# ('hybrid', HybridIndex, {'transformer':'sentence-transformers/all-MiniLM-L6-v2', 'sparse_transform':'bm25'})
+	# ('hybrid', HybridIndex(), {'doc_ids':DOC_IDS, 'docs':DOCS, 'transformer':'sentence-transformers/all-MiniLM-L6-v2', 'sparse_transform':'bm25'})
 ]
 
 QUERY = 'Hybrid search is best'

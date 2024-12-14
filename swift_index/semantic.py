@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -16,7 +16,7 @@ class SemanticIndex(BaseIndex):
     def build(
         self,
         doc_ids: List[str],
-        tansformer: SentenceTransformer,
+        transformer: SentenceTransformer,
         embeddings: Optional[np.ndarray] = None,
         docs: List[str] = None,
     ):
@@ -26,8 +26,7 @@ class SemanticIndex(BaseIndex):
             doc_ids=doc_ids, 
             docs=docs, 
             transformer=transformer, 
-            embeddings=embeddings, 
-            docs=docs
+            embeddings=embeddings,
         )
 
         return
@@ -35,9 +34,9 @@ class SemanticIndex(BaseIndex):
     def search(
         self,
         query: str,
-        num_results: int = 10,
+        num_results: int = 5,
         return_scores: bool = False,
-    ) -> pd.DataFrame:
+    ):
         """Query the index and return the lookup metadata for top number of
         results.
 
@@ -49,4 +48,4 @@ class SemanticIndex(BaseIndex):
             dists : smaller means more similar because closer in vector space.
         """
 
-        return self.index(query=query, num_results=num_results, return_scores=return_scores)
+        return self.index.search(query=query, num_results=num_results, return_scores=return_scores)

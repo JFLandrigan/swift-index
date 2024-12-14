@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 import faiss
 import numpy as np
@@ -18,20 +18,23 @@ class FAISSIndex(BaseIndex):
     def build(
         self,
         doc_ids: List[str],
-        tansformer: SentenceTransformer,
+        transformer: Union[SentenceTransformer, str],
         embeddings: Optional[np.ndarray] = None,
         docs: List[str] = None,
     ):
 
         # init the transformer
-        self.transformer = tansformer
+        if isinstance(transformer, SentenceTransformer):
+            self.transformer = transformer
+        else:
+            self.transformer = SentenceTransformer(transformer)
 
         # Add doc_id to the list
         self.lookup = {i: doc_ids[i] for i in range(len(doc_ids))}
 
         # Prep the embeddings
         if embeddings is None:
-            embeddings = self.transformer.encode(docs, show_progress_bar=True)
+            embeddings = self.transformer.encode(docs)
 
         embeddings = np.array(embeddings, dtype=np.float32)
         faiss.normalize_L2(embeddings)
@@ -45,8 +48,8 @@ class FAISSIndex(BaseIndex):
     def search(
         self,
         query: str,
-        num_results: int = 10,
-        return_dists: bool = False,
+        num_results: int = 5,
+        return_scores: bool = False,
     ) -> pd.DataFrame:
         """Query the index and return the lookup metadata for top number of
         results.
@@ -65,7 +68,7 @@ class FAISSIndex(BaseIndex):
         dists, ids = self.index.search(x=query, k=num_results)
         indeces = [i for i in ids[0]]
 
-        if return_dists:
+        if return_scores:
             d = [i for i in dists[0]]
             l = [self.lookup[ind] for ind in indeces]
             return l, d

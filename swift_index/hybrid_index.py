@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -7,52 +7,47 @@ from sentence_transformers import SentenceTransformer
 from swift_index.base_index import BaseIndex
 from swift_index.bm25_index import BM25Index
 from swift_index.faiss_index import FAISSIndex
+from swift_index.keyword import KeywordIndex
 from swift_index.sparse_index import SparseIndex
 
 SPARSE_TYPES: List[str] = ["bm25", "tfidf", "count"]
 
 
 class HybridIndex(BaseIndex):
-    def __init__(self, sparse_type: str) -> None:
+    def __init__(self, sentence_transformer_name: str,, keyword_transform: str) -> None:
         super().__init__()
-        self.dense_index = FAISSIndex()
+        self.dense_index : FAISSIndex = None
+        self.sentence_transformer_name : str = sentence_transformer_name
+
+        self.keyword_index : KeywordIndex = None
+
+        if keyword_transform in SPARSE_TYPES:
+            self.keyword_transform : str = keyword_transform
+        else:
+            raise ValueError(f"keyword_transform expected one of {SPARSE_TYPES}, got {keyword_transform}")
 
         self.num_items: int = None
 
     def build(
         self,
-        docs_ids: List[str],
+        doc_ids: List[str],
         docs: List[str],
-        dense_transformer: SentenceTransformer,
-        sparse_transform: str,
         embeddings: Optional[np.ndarray] = None,
     ):
-        self.num_items = len(docs_ids)
-
-        if sparse_type in SPARSE_TYPES:
-            self.sparse_type = sparse_type
-            if sparse_type == "bm25":
-                self.sparse_index = BM25Index()
-            else:
-                self.sparse_index = SparseIndex()
-        else:
-            raise ValueError(f"sparse_type expects: {SPARSE_TYPES}, got {sparse_type}")
+        self.num_items = len(doc_ids)
 
         self.dense_index.build(
-            docs_ids=docs_ids,
+            doc_ids=doc_ids,
             docs=docs,
-            tansformer=dense_transformer,
+            transformer=self.sentence_transformer_name,
             embeddings=embeddings,
         )
 
-        if self.sparse_type == "bm25":
-            self.sparse_index.build(docs_ids=docs_ids, docs=docs)
-        else:
-            self.sparse_index.build(
-                docs_ids=docs_ids,
-                docs=docs,
-                transform=self.sparse_type,
-            )
+        self.keyword_index.build(
+            doc_ids=doc_ids, 
+            docs=docs, 
+            transform=self.keyword_transform
+        )
 
         return
 

@@ -12,7 +12,7 @@ from swift_index.base_index import BaseIndex
 TRANSFORM_TYPES = ["tfidf", "count"]
 
 
-class SparseIndex:
+class SparseIndex(BaseIndex):
 
     def __init__(self):
         self.sparse_matrix: csr_matrix = None
